@@ -28,7 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.CycleTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // CycleTimer
+            // 
+            this.CycleTimer.Enabled = true;
+            this.CycleTimer.Interval = 500;
+            this.CycleTimer.Tick += new System.EventHandler(this.CycleTimer_Tick);
             // 
             // MainForm
             // 
@@ -37,11 +45,15 @@
             this.ClientSize = new System.Drawing.Size(333, 343);
             this.Name = "MainForm";
             this.Text = "Game of Life";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer CycleTimer;
     }
 }
 
