@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 using cs_GameOfLife.Classes;
 
 namespace cs_GameOfLife.Forms
@@ -18,14 +19,13 @@ namespace cs_GameOfLife.Forms
         private void CycleTimer_Tick(object sender, System.EventArgs e)
         {
             CellMatrix.Instance.Cycle();
-            Refresh();
+            Invalidate();
         }
 
         private void MainForm_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
-            CellMatrix.Instance.ChangeStatus(e.Location);
-            Refresh();
+            Invalidate(CellMatrix.Instance.ChangeStatus(e.Location));
         }
     }
 }

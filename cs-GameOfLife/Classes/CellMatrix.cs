@@ -12,6 +12,8 @@ namespace cs_GameOfLife.Classes
         private int _xdim;
         private int _ydim;
         private int _size;
+        private SolidBrush _cellColor;
+        private Pen _backgroundColor;
 
         #endregion
 
@@ -21,14 +23,16 @@ namespace cs_GameOfLife.Classes
         {
             //Default value 40x40, cell size 20x20
             _size = 10;
-            _xdim = 40;
-            _ydim = 40;
+            _xdim = 60;
+            _ydim = 60;
+            _cellColor = new SolidBrush(Color.White);
+            _backgroundColor = new Pen(Color.Black);
             InitMatrix();
         }
 
         #endregion
 
-        #region Methods
+        #region Private Methods
 
         private void InitMatrix()
         {
@@ -54,24 +58,29 @@ namespace cs_GameOfLife.Classes
             return count;
         }
 
+        #endregion
+
+        #region Public Methods
+
         public void Paint(PaintEventArgs e)
         {
-            var brush = new SolidBrush(Color.Black);
             for (var i = 0; i < _xdim; i++)
                 for (var j = 0; j < _ydim; j++)
-                    if (_matrix[i, j].Status) 
-                        e.Graphics.FillRectangle(brush, _matrix[i,j].Rect);
+                    if (_matrix[i, j].Status)
+                    {
+                        e.Graphics.FillRectangle(_cellColor, _matrix[i, j].Rect);
+                        e.Graphics.DrawRectangle(_backgroundColor, _matrix[i, j].Rect);
+                    }
         }
 
-        public void ChangeStatus(Point pt)
+        public Rectangle ChangeStatus(Point pt)
         {
-            for (var i = 0; i < _xdim; i++)
-                for (var j = 0; j < _ydim; j++)
-                    if (_matrix[i, j].Rect.Contains(pt))
-                    {
-                        _matrix[i, j].Status = true;
-                        break;
-                    }
+            var i = (int) (pt.X / _size);
+            var j = (int) (pt.Y / _size);
+            if (i >= _xdim || j >= _ydim)
+                return Rectangle.Empty;
+            _matrix[i, j].Status = true;
+            return _matrix[i, j].Rect;
         }
 
         public void Cycle()
