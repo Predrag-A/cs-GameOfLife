@@ -19,16 +19,25 @@ namespace cs_GameOfLife.Classes
         [XmlIgnore]
         public SolidBrush CellColor { get; set; }
         [XmlIgnore]
-        public Pen BackgroundColor { get; set; }
+        public Pen BorderColor { get; set; }
+        [XmlIgnore]
+        public Color BackgroundColor { get; set; }
+
         public string CellColorHtml
         {
             get => ColorTranslator.ToHtml(CellColor.Color);
             set => CellColor.Color = ColorTranslator.FromHtml(value);
         }
-        public string BgColorHtml
+        public string BorderColorHTML
         {
-            get => ColorTranslator.ToHtml(BackgroundColor.Color);
-            set => BackgroundColor.Color = ColorTranslator.FromHtml(value);
+            get => ColorTranslator.ToHtml(BorderColor.Color);
+            set => BorderColor.Color = ColorTranslator.FromHtml(value);
+        }
+
+        public string BackgroundColorHTML
+        {
+            get => ColorTranslator.ToHtml(BackgroundColor);
+            set => BackgroundColor = ColorTranslator.FromHtml(value);
         }
 
         #endregion
@@ -49,9 +58,10 @@ namespace cs_GameOfLife.Classes
             XDim = 40;
             YDim = 40;
             Size = 10;
-            Speed = 500;
+            Speed = 200;
             CellColor = new SolidBrush(Color.White);
-            BackgroundColor = new Pen(Color.Black);
+            BorderColor = new Pen(Color.Gray) {Width = 0.1f};
+            BackgroundColor = Color.Black;
         }
 
         public bool Load(string fileName)
@@ -69,7 +79,7 @@ namespace cs_GameOfLife.Classes
             Size = s.Size;
             Speed = s.Speed;
             CellColorHtml = s.CellColorHtml;
-            BgColorHtml = s.BgColorHtml;
+            BorderColorHTML = s.BorderColorHTML;
             return true;
         }
 

@@ -9,6 +9,7 @@ namespace cs_GameOfLife.Classes
         #region Fields
 
         private Cell[,] _matrix;
+        private Cell[,] _previous;
 
         #endregion
 
@@ -33,25 +34,32 @@ namespace cs_GameOfLife.Classes
         private void InitMatrix()
         {
             _matrix = new Cell[Options.XDim,Options.YDim];
+            _previous = new Cell[Options.XDim,Options.YDim];
             for(var i=0;i<Options.XDim;i++)
-                for(var j=0;j<Options.YDim;j++)
-                    _matrix[i,j] = new Cell(new Rectangle(i*Options.Size,j*Options.Size, Options.Size, Options.Size), false);
+                for (var j = 0; j < Options.YDim; j++)
+                {
+                    _matrix[i, j] = new Cell(new Rectangle(i * Options.Size, j * Options.Size + 24, Options.Size, Options.Size),
+                        false);
+                    _previous[i,j] = new Cell(_matrix[i,j].Rect, false);
+                }
         }
 
         private int LiveNeighborCount(int x, int y)
         {
             var count = 0;
 
-            for(var i=-1;i<2;i++)
+            for (var i = -1; i < 2; i++)
+            {
+                var xDim = (x + Options.XDim + i) % Options.XDim;
                 for (var j = -1; j < 2; j++)
                 {
-                    var xDim = (x + Options.XDim + i) % Options.XDim;
                     var yDim = (y + Options.YDim + j) % Options.YDim;
-                    if (_matrix[xDim,yDim].Status)
+                    if (_previous[xDim, yDim].Status)
                         count++;
                 }
+            }
 
-            return count;
+            return count - (_previous[x,y].Status ? 1 : 0);
         }
 
         #endregion
@@ -62,34 +70,59 @@ namespace cs_GameOfLife.Classes
         {
             for (var i = 0; i < Options.XDim; i++)
                 for (var j = 0; j < Options.YDim; j++)
+                {
                     if (_matrix[i, j].Status)
-                    {
                         e.Graphics.FillRectangle(Options.CellColor, _matrix[i, j].Rect);
-                        e.Graphics.DrawRectangle(Options.BackgroundColor, _matrix[i, j].Rect);
-                    }
+                    e.Graphics.DrawRectangle(Options.BorderColor, _matrix[i, j].Rect);
+                }
+
         }
 
         public Rectangle ChangeStatus(Point pt)
         {
             var i = (int) (pt.X / Options.Size);
-            var j = (int) (pt.Y / Options.Size);
+            var j = (int) ((pt.Y-24) / Options.Size);
             if (i >= Options.XDim || j >= Options.YDim)
                 return Rectangle.Empty;
             _matrix[i, j].Status = true;
             return _matrix[i, j].Rect;
         }
 
+        public Rectangle InvertStatus(Point pt)
+        {
+            var i = (int)(pt.X / Options.Size);
+            var j = (int)((pt.Y - 24) / Options.Size);
+            if (i >= Options.XDim || j >= Options.YDim)
+                return Rectangle.Empty;
+            _matrix[i, j].Status = !_matrix[i,j].Status;
+            return _matrix[i, j].Rect;
+        }
+
         public void Cycle()
         {
+            var temp = _previous;
+            _previous = _matrix;
+            _matrix = temp;
+
             for (var i = 0; i < Options.XDim; i++)
                 for (var j = 0; j < Options.YDim; j++)
                 {
                     var count = LiveNeighborCount(i, j);
-                    if (!_matrix[i, j].Status && count == 3)
-                        _matrix[i, j].Status = true;
-                    else if (count < 2 || count > 3)
-                            _matrix[i, j].Status = false;
+                    _matrix[i, j].Status = _previous[i, j].Status && (count == 2 || count == 3) ||
+                                      !_previous[i, j].Status && count == 3;
                 }
+        }
+
+        public void New()
+        {
+            InitMatrix();
+        }
+
+        public void LoadOptions(string fileName)
+        {
+            if(!Options.Load(fileName))
+                Options.Default();
+            InitMatrix();
         }
 
         #endregion
