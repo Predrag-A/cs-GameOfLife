@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Classes\Cell.cs" />
     <Compile Include="Classes\CellMatrix.cs" />
+    <Compile Include="Classes\Settings.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

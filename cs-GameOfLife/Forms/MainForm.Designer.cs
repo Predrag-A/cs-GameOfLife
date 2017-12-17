@@ -35,7 +35,7 @@
             // CycleTimer
             // 
             this.CycleTimer.Enabled = true;
-            this.CycleTimer.Interval = 500;
+            this.CycleTimer.Interval = 200;
             this.CycleTimer.Tick += new System.EventHandler(this.CycleTimer_Tick);
             // 
             // MainForm

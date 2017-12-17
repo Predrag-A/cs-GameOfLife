@@ -9,6 +9,9 @@ namespace cs_GameOfLife.Forms
         public MainForm()
         {
             InitializeComponent();
+            if(!CellMatrix.Instance.Options.Load("settings.xml"))
+                CellMatrix.Instance.Options.Default();
+            CycleTimer.Interval = CellMatrix.Instance.Options.Speed;
         }
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
